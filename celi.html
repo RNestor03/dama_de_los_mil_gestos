@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feliz Primavera, Celina 🌼</title>
+  <meta name="description" content="Una tarjetita romántica con flores amarillas para Celina." />
+  <style>
+    :root{
+      --bg-1:#fffbea;  /* crema */
+      --bg-2:#fff3c4;  /* amarillo pastel */
+      --y-100:#fff8d6;
+      --y-200:#ffe87a;
+      --y-300:#ffd84d;
+      --y-400:#ffca28; /* tono principal */
+      --y-500:#f5b400;
+      --y-600:#d89a00;
+      --text:#3a2f1a;
+      --accent:#ffef9f;
+      --shadow:0 10px 30px rgba(0,0,0,.15);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 10% 10%, var(--bg-2), transparent 60%),
+        radial-gradient(900px 700px at 90% 0%, var(--y-100), transparent 60%),
+        linear-gradient(160deg, var(--bg-1), #ffffff);
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      min-height:100dvh;
+      display:flex;align-items:center;justify-content:center;
+      padding: clamp(16px, 4vw, 40px);
+      position:relative;
+      isolation:isolate;
+    }
+
+    .card{
+      width:min(880px, 100%);
+      background:#fff;
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero{
+      position:relative;
+      padding: clamp(28px, 6vw, 56px);
+      background: linear-gradient(180deg, var(--accent), #fff);
+      border-bottom: 1px dashed rgba(0,0,0,.08);
+    }
+
+    .badge{
+      display:inline-flex;align-items:center;gap:.5rem;
+      background:#fff7cc;
+      color:#7a5a00;
+      border:1px solid #ffe27a;
+      padding:.45rem .85rem;
+      border-radius:999px;
+      font-weight:600;
+      letter-spacing:.3px;
+      box-shadow:0 4px 14px rgba(255,202,40,.35);
+      transform: translateY(-4px);
+      animation: floaty 4s ease-in-out infinite;
+    }
+    @keyframes floaty{ 0%,100%{transform:translateY(-4px)} 50%{transform:translateY(2px)} }
+
+    h1{ margin:.8rem 0 0 0; font-size:clamp(1.8rem, 4vw, 3rem); line-height:1.15; }
+    .celina{
+      background:linear-gradient(90deg, var(--y-400), var(--y-600));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 2px 0 rgba(255,255,255,.7);
+    }
+    .subtitle{ margin:.25rem 0 0 0; opacity:.8; font-size:clamp(1rem, 2.4vw, 1.25rem); }
+
+    .content{ padding:clamp(22px, 5vw, 42px); display:grid; gap:clamp(18px,2.6vw,26px); }
+    .note{ font-size:clamp(1.05rem,2.2vw,1.2rem); line-height:1.75; }
+
+    /* Imagen reducida en la tarjeta */
+    .photo{ max-width:min(560px, 100%); margin:0 auto; border-radius:18px; overflow:hidden; box-shadow: var(--shadow); border:1px solid #fff2b3; background:#fff }
+    .photo img{ display:block; width:100%; height:auto; object-fit:cover; aspect-ratio:16/9 }
+    .photo figcaption{ padding:10px 14px; font-size:.9rem; background:linear-gradient(180deg,#fffdf0,#ffffff); color:rgba(0,0,0,.65) }
+
+    .quote{
+      position:relative;
+      padding: clamp(14px, 2.2vw, 18px) clamp(18px, 2.8vw, 24px);
+      border-left:6px solid var(--y-400);
+      background:linear-gradient(90deg,#fffdf0,#ffffff);
+      border-radius:12px;
+    }
+
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}
+    .btn{
+      -webkit-tap-highlight-color: transparent;
+      cursor:pointer; border:none; border-radius:16px; padding:14px 18px;
+      font-weight:700; letter-spacing:.3px;
+      background:linear-gradient(180deg,var(--y-400),var(--y-500));
+      color:#3a2f1a;
+      box-shadow:0 8px 20px rgba(246,198,0,.45), inset 0 1px 0 rgba(255,255,255,.7);
+      transition:.25s transform, .25s box-shadow, .25s filter;
+    }
+    .btn:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(246,198,0,.55) }
+    .btn:active{ transform:translateY(0); filter:saturate(1.2) }
+
+    .hint{opacity:.6; font-size:.92rem}
+
+    /* Flor giratoria decorativa */
+    .flower{
+      position:absolute; right:clamp(8px,2vw,20px); top:clamp(8px,2vw,18px);
+      width:clamp(52px,9vw,82px); aspect-ratio:1/1;
+      animation: spin 14s linear infinite; opacity:.9;
+      filter: drop-shadow(0 6px 10px rgba(255,202,40,.35)); pointer-events:none;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+
+    /* Pétalos cayendo */
+    .petal{
+      position:fixed; top:-10vh; left:0; width:clamp(10px,2.8vw,18px); height:clamp(16px,4vw,28px);
+      background:var(--y-400);
+      border-radius:60% 40% 70% 30% / 60% 40% 60% 40%;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,.08);
+      opacity:.9; transform:rotate(0deg); animation:fall linear forwards; z-index:0;
+    }
+    @keyframes fall{ 0%{transform:translateY(-10vh) rotate(0)} 100%{transform:translateY(120vh) rotate(360deg)} }
+
+    /* Mensaje oculto */
+    .reveal{
+      display:grid; gap:14px; place-items:start;
+      background:#fffef7; border:1px solid #fff2b3; border-radius:14px; padding:clamp(14px,3vw,20px);
+    }
+    .heart{ display:inline-block; transform-origin:center; animation:beat 1.6s ease-in-out infinite }
+    @keyframes beat{0%,100%{transform:scale(1)} 25%{transform:scale(1.08)} 50%{transform:scale(1.12)} 75%{transform:scale(1.08)}}
+
+    .footer{ text-align:center; padding:14px; opacity:.7; font-size:.9rem }
+
+    /* Modal / Lightbox */
+    .lightbox{ position:fixed; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.28); backdrop-filter:blur(2px); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:999; padding:20px }
+    .lightbox.open{ opacity:1; pointer-events:auto }
+    .lightbox .panel{ width:min(920px, 96vw); background:#fff; border-radius:22px; box-shadow:0 20px 50px rgba(0,0,0,.35); overflow:hidden; transform:scale(.96); transition:transform .25s ease }
+    .lightbox.open .panel{ transform:scale(1) }
+    .lightbox header{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 16px; background:linear-gradient(180deg, var(--accent), #fff); border-bottom:1px dashed rgba(0,0,0,.08) }
+    .lightbox header h3{ margin:0; font-size:1.05rem }
+    .lightbox .close{ border:none; background:transparent; font-size:1.4rem; cursor:pointer; line-height:1 }
+    .lightbox figure{ margin:0; background:#0001 }
+    .lightbox img{ display:block; max-width:100%; max-height:80vh; margin:0 auto }
+    .lightbox .lb-actions{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 14px; font-size:.92rem; background:#fffef7; border-top:1px solid #fff2b3 }
+    .lightbox .lb-actions a{ font-weight:600; color:#7a5a00; text-decoration:underline }
+
+    @media (max-width:380px){
+      .actions{flex-direction:column}
+      .btn{width:100%; text-align:center}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app">
+    <div class="card">
+      <div class="hero">
+        <span class="badge">🌼 Feliz primavera</span>
+        <h1>Para <span class="celina">Celina</span></h1>
+        <p class="subtitle">Un detallito amarillo, discreto y sincero, porque me encantaría verte sonreír hoy.</p>
+
+        <!-- Flor girando -->
+        <svg class="flower" viewBox="0 0 100 100" aria-hidden="true" role="img">
+          <defs>
+            <radialGradient id="g" cx="50%" cy="50%" r="60%">
+              <stop offset="0%"  stop-color="#fff3b0"/>
+              <stop offset="70%" stop-color="#ffca28"/>
+              <stop offset="100%" stop-color="#f5b400"/>
+            </radialGradient>
+          </defs>
+          <circle cx="50" cy="50" r="8" fill="#ffcc33"/>
+          <g fill="url(#g)">
+            <ellipse cx="50" cy="18" rx="10" ry="20"/>
+            <ellipse cx="50" cy="82" rx="10" ry="20"/>
+            <ellipse cx="18" cy="50" rx="20" ry="10"/>
+            <ellipse cx="82" cy="50" rx="20" ry="10"/>
+            <ellipse cx="27" cy="27" rx="14" ry="9"/>
+            <ellipse cx="73" cy="27" rx="14" ry="9"/>
+            <ellipse cx="27" cy="73" rx="14" ry="9"/>
+            <ellipse cx="73" cy="73" rx="14" ry="9"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="content">
+        <p class="note">
+          Hoy todos regalan flores amarillas… y aunque por ahora lo nuestro desea caminar despacito y en silencio, quiero dejarte este detalle para decirte algo sencillo: <strong>eres importante para mí</strong>.
+        </p>
+
+        <!-- Imagen externa (Drive + fallback) -->
+        <figure class="photo">
+          <a id="photoLink" href="#" rel="noopener">
+            <img id="photoImg" src="" alt="Flores amarillas para ti" loading="lazy">
+          </a>
+          <figcaption>Toca para verla en grande 🌼</figcaption>
+        </figure>
+
+        <!-- Modal de imagen -->
+        <div id="lightbox" class="lightbox" aria-hidden="true" hidden>
+          <div class="panel" role="dialog" aria-label="Imagen ampliada">
+            <header>
+              <h3>Feliz primavera, Celina 🌼</h3>
+              <button class="close" id="lbClose" aria-label="Cerrar">✕</button>
+            </header>
+            <figure>
+              <img id="lbImg" src="" alt="Flores amarillas para ti (ampliada)">
+            </figure>
+            <div class="lb-actions">
+              <span>Con cariño 💛</span>
+              <a id="lbOpenDrive" href="#" target="_blank" rel="noopener">Abrir en Drive</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote">
+          <p>
+            Estas flores amarillas son para recordarte —sin ruido, sin apuros— que ocupas un lugar muy especial en mis pensamientos.
+            Aún no podemos hacerlo público, y está bien; si <em>Dios quiere</em> y lo permite, llegará su momento. Mientras tanto, cada vez que veo el color amarillo me acuerdo de cómo te queda en tu outfit, y no te voy a mentir: <strong>me encanta admirarte</strong>.
+          </p>
+        </div>
+
+        <div class="reveal" id="reveal" hidden>
+          <p>
+            <span class="heart">💛</span>
+            Me gusta la paz que transmites, la dulzura con la que hablas y la forma en que tu sonrisa vuelve cálido cualquier día.
+            Que esta pequeña tarjeta te abrace como un rayo de sol y te susurre: <strong>¡Feliz primavera, Celina!</strong>
+          </p>
+          <p class="hint">(Toca el botón otra vez si quieres ver más pétalos caer 🌼)</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="btnPetals">Hacer caer pétalos</button>
+          <button class="btn" id="btnReveal">Ver mensaje</button>
+        </div>
+
+        <p class="hint">Es un regalo discreto: puedes abrirlo en el celular o la compu. 🌟</p>
+      </div>
+
+      <div class="footer">Con cariño — primavera <span id="year"></span></div>
+    </div>
+  </div>
+
+  <script>
+    // Año dinámico
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Pétalos
+    const btnPetals = document.getElementById('btnPetals');
+    function dropPetals(amount=24, duration=6000){
+      for(let i=0;i<amount;i++){
+        const p=document.createElement('div');
+        p.className='petal';
+        const startX = Math.random()*100;
+        const rot = Math.random()*360;
+        const delay = Math.random()*800;
+        const scale = .8 + Math.random()*1.2;
+        p.style.left = startX + 'vw';
+        p.style.transform = `translateY(-10vh) rotate(${rot}deg) scale(${scale})`;
+        const dur = duration + Math.random()*3000;
+        p.style.animationDuration = dur + 'ms';
+        p.style.animationDelay = delay + 'ms';
+        const hues = ['#ffca28','#ffd84d','#ffe87a','#f5b400'];
+        p.style.background = hues[Math.floor(Math.random()*hues.length)];
+        document.body.appendChild(p);
+        setTimeout(()=> p.remove(), dur + 1200);
+      }
+    }
+    btnPetals.addEventListener('click', ()=> dropPetals());
+
+    // Revelar mensaje
+    const reveal = document.getElementById('reveal');
+    const btnReveal = document.getElementById('btnReveal');
+    let revealed = false;
+    btnReveal.addEventListener('click', ()=>{
+      revealed = !revealed;
+      reveal.hidden = !revealed;
+      btnReveal.textContent = revealed ? 'Ocultar mensaje' : 'Ver mensaje';
+      if(revealed) dropPetals(36, 7000);
+    });
+
+    // Carga de imagen desde Drive con fallback
+    (function(){
+      // === Reemplaza SOLO este ID si usas otra imagen de Drive ===
+      const DRIVE_ID = '1rvhmbkEVUePg2Bh1EG73cWOCMyh_wdWl';
+      const photoImg = document.getElementById('photoImg');
+      const photoLink = document.getElementById('photoLink');
+
+      // Enlace para abrir el visor de Drive
+      const driveViewer = `https://drive.google.com/file/d/${DRIVE_ID}/view?usp=sharing`;
+      photoLink.href = '#'; // abrimos modal, no el viewer directo
+
+      const candidates = [
+        `https://drive.google.com/uc?export=view&id=${DRIVE_ID}`,
+        `https://drive.google.com/uc?export=download&id=${DRIVE_ID}`,
+        `https://drive.google.com/thumbnail?id=${DRIVE_ID}&sz=w2000`
+      ];
+      const fallback = 'https://png.pngtree.com/png-clipart/20240329/original/pngtree-yellow-flower-vector-png-image_14710336.png';
+
+      function trySequential(urls){
+        let i = 0;
+        const tryNext = ()=>{
+          if(i>=urls.length){ photoImg.src = fallback; return; }
+          const test = new Image();
+          test.onload = ()=>{ photoImg.src = urls[i]; };
+          test.onerror = ()=>{ i++; tryNext(); };
+          test.src = urls[i];
+        };
+        tryNext();
+      }
+      trySequential(candidates);
+
+      // Modal (lightbox)
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lbImg');
+      const lbClose = document.getElementById('lbClose');
+      const lbOpenDrive = document.getElementById('lbOpenDrive');
+
+      function openLB(){
+        lbImg.src = photoImg && photoImg.src ? photoImg.src : candidates[0];
+        lbOpenDrive.href = driveViewer;
+        lb.hidden = false;
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden','false');
+      }
+      function closeLB(){
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden','true');
+        setTimeout(()=>{ lb.hidden = true; }, 200);
+      }
+
+      photoLink.addEventListener('click', (e)=>{ e.preventDefault(); openLB(); });
+      lbClose.addEventListener('click', closeLB);
+      lb.addEventListener('click', (e)=>{ if(e.target === lb) closeLB(); });
+      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !lb.hidden) closeLB(); });
+
+      // Efecto inicial
+      window.addEventListener('load', ()=> setTimeout(()=> dropPetals(22, 6500), 400));
+    })();
+  </script>
+</body>
+</html>
