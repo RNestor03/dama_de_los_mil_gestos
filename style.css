@@ -1169,6 +1169,29 @@ body.reading-mode .particles {
     transform: scale(1);
   }
 }
+/* FOTO FINAL BAJO EL FELIZ 2026 */
+.letter-photo-final {
+  margin-top: 1rem;
+  text-align: center;
+  animation: softReveal 0.8s ease forwards;
+  padding-bottom: 1rem;
+}
+
+.letter-photo-final img {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(148, 27, 73, 0.28);
+  border: 2px solid rgba(248, 181, 208, 0.6);
+}
+
+.letter-photo-final .photo-caption {
+  margin-top: 0.55rem;
+  font-size: 0.88rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
 
 
 
