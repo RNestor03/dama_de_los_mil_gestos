@@ -338,9 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // BRINDIS & AÑO NUEVO
   // ==============================
   if (btnToast && yearBadge && yearNumber) {
-    const currentYear = new Date().getFullYear();
-    const nextYear = currentYear + 1;
-    yearNumber.textContent = nextYear;
+    yearNumber.textContent = "2026";
 
     btnToast.addEventListener("click", () => {
       yearBadge.classList.add("visible");
@@ -350,3 +348,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
