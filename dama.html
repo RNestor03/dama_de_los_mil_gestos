@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f9dce7" />
+  <meta name="description" content="Una carta interactiva de cumpleaños para la dama de los mil gestos." />
+  <title>Para mi dama de los mil gestos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose-25: #fffafb;
+      --rose-50: #fff5f8;
+      --rose-100: #fde9f0;
+      --rose-200: #f7d1de;
+      --rose-300: #edb4c6;
+      --rose-400: #d98ca4;
+      --rose-500: #ba617d;
+      --ink: #442938;
+      --muted: #8b6675;
+      --soft: #fffdf8;
+      --white: #ffffff;
+      --gold: #d3a24a;
+      --gold-soft: #fff1b8;
+      --shadow: 0 22px 70px rgba(112, 51, 75, .17);
+      --shadow-soft: 0 14px 40px rgba(112, 51, 75, .12);
+      --radius-xl: 34px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 4%, rgba(255,255,255,.95) 0 14%, transparent 32%),
+        radial-gradient(circle at 90% 10%, rgba(247,209,222,.95) 0 15%, transparent 33%),
+        radial-gradient(circle at 15% 84%, rgba(255,241,184,.46) 0 10%, transparent 30%),
+        linear-gradient(145deg, #fff 0%, #fff6f9 38%, #f7d6e1 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .42;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      z-index: 0;
+    }
+
+    button, a { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .petal-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 3; }
+    .petal {
+      position: absolute;
+      top: -30px;
+      width: 12px;
+      height: 18px;
+      border-radius: 80% 0 80% 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(237,180,198,.88));
+      box-shadow: 0 10px 24px rgba(186,97,125,.14);
+      animation: fall var(--fall, 10s) linear infinite;
+      opacity: var(--opacity, .75);
+      filter: blur(var(--blur, 0));
+    }
+
+    @keyframes fall {
+      0% { transform: translate3d(0,-40px,0) rotate(0deg); }
+      50% { transform: translate3d(var(--drift, 34px), 52vh, 0) rotate(180deg); }
+      100% { transform: translate3d(calc(var(--drift, 34px) * -1), 106vh, 0) rotate(360deg); }
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: 16px 14px calc(100px + var(--safe-bottom));
+    }
+
+    .hero {
+      min-height: min(92vh, 840px);
+      display: grid;
+      align-items: center;
+      padding: 24px 0 34px;
+    }
+
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 42px;
+      padding: clamp(25px, 7vw, 46px);
+      text-align: center;
+      background: linear-gradient(160deg, rgba(255,255,255,.9), rgba(255,245,248,.86));
+      border: 1px solid rgba(255,255,255,.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      isolation: isolate;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 13px;
+      border-radius: 31px;
+      border: 1px solid rgba(211,162,74,.26);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 999px;
+      top: -136px;
+      right: -128px;
+      background: radial-gradient(circle, rgba(247,209,222,.95), transparent 68%);
+      z-index: -2;
+    }
+
+    .rose-mark {
+      width: 126px;
+      height: 126px;
+      margin: 0 auto 10px;
+      display: grid;
+      place-items: center;
+      filter: drop-shadow(0 20px 28px rgba(186,97,125,.18));
+      animation: breathe 4.2s ease-in-out infinite;
+    }
+    @keyframes breathe { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-5px) scale(1.035); } }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(211,162,74,.26);
+      color: #966176;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 10px 0 0;
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(50px, 18vw, 92px);
+      line-height: .9;
+      font-weight: 400;
+      color: #a85b74;
+      text-shadow: 0 12px 28px rgba(186,97,125,.18);
+    }
+
+    .hero-subtitle {
+      margin: 14px auto 0;
+      max-width: 560px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(22px, 6vw, 33px);
+      line-height: 1.1;
+      color: #5a3344;
+      font-weight: 700;
+    }
+
+    .hero-copy {
+      margin: 15px auto 0;
+      max-width: 540px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.72;
+    }
+
+    .hero-actions { display: grid; gap: 10px; justify-items: center; margin-top: 24px; }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      min-height: 52px;
+      padding: 14px 22px;
+      color: #fff;
+      background: linear-gradient(135deg, #b95f7b, #e6a7ba);
+      box-shadow: 0 16px 34px rgba(186,97,125,.26);
+      font-weight: 850;
+      cursor: pointer;
+      transition: transform .22s ease, box-shadow .22s ease, opacity .22s ease;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 22px 44px rgba(186,97,125,.28); }
+    .btn.secondary {
+      color: #865266;
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(186,97,125,.18);
+      box-shadow: 0 12px 28px rgba(112,51,75,.08);
+    }
+    .btn.gold { background: linear-gradient(135deg, #b7832e, #e4c66f); }
+    .btn.small { min-height: 42px; padding: 10px 14px; font-size: 13px; }
+
+    .scroll-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      color: #9c7181;
+      font-size: 12px;
+    }
+    .scroll-hint .dot { width: 7px; height: 7px; border-radius: 999px; background: #d98ca4; box-shadow: 0 0 0 7px rgba(217,140,164,.12); }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      margin: 0 -14px 18px;
+      padding: 10px 14px 12px;
+      background: linear-gradient(to bottom, rgba(255,246,249,.98), rgba(255,246,249,.74));
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,.68);
+      display: none;
+    }
+    .topbar.show { display: block; }
+    .toprow { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .top-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 800; color: #6c3e52; }
+    .progress-shell { height: 8px; border-radius: 999px; background: rgba(255,255,255,.72); overflow: hidden; margin-top: 9px; box-shadow: inset 0 0 0 1px rgba(186,97,125,.08); }
+    .progress-bar { height: 100%; width: 0%; border-radius: inherit; background: linear-gradient(90deg, #d98ca4, #e9b5c4, #d3a24a); transition: width .45s ease; }
+    .progress-text { color: #9a6f7f; font-size: 12px; margin-top: 6px; }
+
+    .stage { display: none; }
+    .stage.show { display: block; }
+
+    .segment {
+      position: relative;
+      margin: 16px 0;
+      opacity: 0;
+      transform: translateY(14px) scale(.99);
+      animation: rise .55s ease forwards;
+      scroll-margin-top: 84px;
+    }
+    @keyframes rise { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .paper {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-xl);
+      padding: clamp(22px, 6vw, 36px);
+      background: linear-gradient(160deg, rgba(255,255,255,.93), rgba(255,253,248,.9));
+      border: 1px solid rgba(255,255,255,.86);
+      box-shadow: var(--shadow-soft);
+    }
+    .paper::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(247,209,222,.72), transparent 68%);
+      right: -108px;
+      top: -118px;
+      pointer-events: none;
+    }
+
+    .kicker {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #a66a7f;
+      font-size: 11px;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    .kicker::before { content: "✦"; color: var(--gold); }
+
+    .segment h2 {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 14px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(31px, 9vw, 48px);
+      line-height: .98;
+      color: #563142;
+    }
+
+    .letter-text { position: relative; z-index: 1; }
+    .letter-text p {
+      margin: 0 0 15px;
+      color: #604353;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(20px, 5.4vw, 25px);
+      line-height: 1.48;
+      font-weight: 600;
+    }
+    .letter-text p:last-child { margin-bottom: 0; }
+    .letter-text p.signature {
+      margin-top: 20px;
+      font-family: 'Great Vibes', cursive;
+      color: #a85b74;
+      font-size: clamp(43px, 13vw, 65px);
+      line-height: 1;
+      text-align: right;
+      font-weight: 400;
+    }
+
+    .segment-actions { position: relative; z-index: 1; display: grid; gap: 10px; margin-top: 22px; }
+
+    .gate-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-xl);
+      padding: clamp(22px, 6vw, 34px);
+      background: linear-gradient(145deg, rgba(255,245,248,.96), rgba(255,255,255,.92));
+      border: 1px solid rgba(211,162,74,.28);
+      box-shadow: 0 22px 58px rgba(186,97,125,.16);
+      isolation: isolate;
+    }
+    .gate-card::before {
+      content: "";
+      position: absolute;
+      inset: 13px;
+      border: 1px dashed rgba(211,162,74,.38);
+      border-radius: 26px;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .gate-card::after {
+      content: "";
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 42px;
+      right: -42px;
+      bottom: -50px;
+      background: linear-gradient(135deg, rgba(255,255,255,.72), rgba(247,209,222,.84));
+      transform: rotate(16deg);
+      z-index: -2;
+    }
+
+    .gift-visual {
+      display: grid;
+      place-items: center;
+      width: 98px;
+      height: 98px;
+      margin: 0 0 14px;
+      border-radius: 30px;
+      background: linear-gradient(145deg, #fff, #fde8ef);
+      box-shadow: inset 0 -12px 24px rgba(186,97,125,.08), 0 18px 34px rgba(186,97,125,.13);
+      animation: giftFloat 2.8s ease-in-out infinite;
+    }
+    @keyframes giftFloat { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-4px) rotate(-1deg); } }
+    .gift-visual svg { width: 75px; height: 75px; }
+
+    .gate-card p {
+      position: relative;
+      z-index: 1;
+      color: #775365;
+      font-size: 15px;
+      line-height: 1.68;
+      margin: 0;
+    }
+    .gate-card .warning {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #9b667a;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .reveal-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-xl);
+      padding: clamp(22px, 6vw, 36px);
+      background: linear-gradient(160deg, rgba(255,255,255,.96), rgba(255,250,252,.9));
+      border: 1px solid rgba(255,255,255,.86);
+      box-shadow: var(--shadow-soft);
+    }
+    .reveal-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -80px -90px auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(211,162,74,.19), transparent 68%);
+      pointer-events: none;
+    }
+    .reveal-badge {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,241,184,.5);
+      color: #967030;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .11em;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .final-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 38px;
+      padding: clamp(23px, 6vw, 38px);
+      background: linear-gradient(160deg, rgba(255,255,255,.95), rgba(255,253,248,.92));
+      border: 1px solid rgba(255,255,255,.86);
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+    .final-card::before, .final-card::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .final-card::before {
+      inset: 14px;
+      border-radius: 28px;
+      border: 1px solid rgba(211,162,74,.22);
+    }
+    .final-card::after {
+      width: 310px;
+      height: 310px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(247,209,222,.64), transparent 68%);
+      right: -150px;
+      top: -150px;
+    }
+
+    .kintsugi-text {
+      position: relative;
+      padding: 18px 16px 16px;
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(255,253,248,.96), rgba(255,241,184,.26));
+      border: 1px solid rgba(211,162,74,.24);
+      overflow: hidden;
+    }
+    .kintsugi-text::before,
+    .kintsugi-text::after {
+      content: "";
+      position: absolute;
+      inset: -10% auto -10% 52%;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, rgba(211,162,74,.78), transparent);
+      transform: rotate(17deg);
+      box-shadow: 14px 48px 0 rgba(211,162,74,.45), -18px 122px 0 rgba(211,162,74,.35);
+      pointer-events: none;
+    }
+    .kintsugi-text::after { left: 23%; transform: rotate(-20deg); opacity: .6; }
+    .kintsugi-text p { position: relative; z-index: 1; }
+
+    .completion {
+      margin-top: 18px;
+      padding: 20px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(255,245,248,.86), rgba(255,255,255,.78));
+      border: 1px solid rgba(186,97,125,.12);
+      text-align: center;
+    }
+    .completion .script {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(45px, 14vw, 70px);
+      line-height: .95;
+      color: #a85b74;
+      margin: 0;
+    }
+    .completion p { margin: 12px auto 0; color: var(--muted); font-size: 14px; line-height: 1.65; max-width: 520px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + var(--safe-bottom));
+      transform: translate(-50%, 18px);
+      width: min(92vw, 430px);
+      border-radius: 22px;
+      padding: 13px 15px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(211,162,74,.28);
+      color: #765264;
+      box-shadow: 0 18px 44px rgba(112,51,75,.17);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 20;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      transition: opacity .28s ease, transform .28s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 30;
+      color: #d98ca4;
+      font-size: 18px;
+      animation: heartUp .9s ease-out forwards;
+      text-shadow: 0 8px 20px rgba(186,97,125,.25);
+    }
+    @keyframes heartUp { to { transform: translateY(-54px) scale(1.5); opacity: 0; } }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      place-items: end center;
+      padding: 16px;
+      background: rgba(69, 36, 51, .28);
+      backdrop-filter: blur(8px);
+    }
+    .modal.show { display: grid; }
+    .modal-card {
+      width: min(100%, 500px);
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(255,255,255,.97), rgba(255,245,248,.96));
+      box-shadow: 0 28px 80px rgba(69,36,51,.25);
+      border: 1px solid rgba(255,255,255,.86);
+      padding: 24px;
+      animation: sheetUp .3s ease both;
+    }
+    @keyframes sheetUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-card h3 { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 35px; line-height: 1; color: #573242; }
+    .modal-card p { margin: 12px 0 0; color: #775365; line-height: 1.65; font-size: 15px; }
+    .modal-actions { display: grid; gap: 10px; margin-top: 18px; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @media (min-width: 680px) {
+      .segment-actions, .modal-actions { grid-template-columns: auto auto; justify-content: start; }
+      .hero-actions { grid-template-columns: auto auto; justify-content: center; }
+      .gate-card { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: center; }
+      .gift-visual { margin: 0; }
+      .gate-card .segment-actions { grid-column: 2; }
+    }
+
+    @media (max-width: 420px) {
+      .app { padding-left: 12px; padding-right: 12px; }
+      .hero-card { border-radius: 34px; }
+      .paper, .gate-card, .reveal-card, .final-card { border-radius: 28px; }
+      .letter-text p { font-size: 20px; }
+      .btn { width: 100%; }
+      .top-title { font-size: 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+      .petal-layer { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
+  <main class="app">
+    <section class="hero" id="inicio">
+      <article class="hero-card">
+        <div class="rose-mark" aria-hidden="true"></div>
+        <span class="eyebrow">Una carta para leer despacito</span>
+        <h1>Para Belén</h1>
+        <p class="hero-subtitle">Hoy no hay apuro. Solo una carta, cuatro pausas y una promesa escondida en cada recuerdo.</p>
+        <p class="hero-copy">La carta se va a abrir de a poquito. Cuando aparezca una indicación, primero abrí el regalo que se pide y después tocá el botón. Nada se revela antes de tiempo.</p>
+        <div class="hero-actions">
+          <button class="btn" type="button" id="startBtn">Comenzar la carta</button>
+          <button class="btn secondary" type="button" id="resetBtnHero">Reiniciar recorrido</button>
+        </div>
+        <div class="scroll-hint"><span class="dot"></span><span>Hecho para verse desde el teléfono</span></div>
+      </article>
+    </section>
+
+    <div class="topbar" id="topbar">
+      <div class="toprow">
+        <div class="top-title">Dama de los mil gestos</div>
+        <button class="btn secondary small" type="button" id="resetBtnTop">Reiniciar</button>
+      </div>
+      <div class="progress-shell"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="progress-text" id="progressText">La carta aún no empezó.</div>
+    </div>
+
+    <section class="stage" id="stage" aria-live="polite"></section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <article class="modal-card">
+      <h3 id="confirmTitle">¿Ya lo abriste?</h3>
+      <p id="confirmText">Promesa de algoritmo: cuando confirmes, recién ahí aparece la parte que corresponde.</p>
+      <div class="modal-actions">
+        <button class="btn gold" type="button" id="modalYes">Sí, ya lo abrí</button>
+        <button class="btn secondary" type="button" id="modalNo">Todavía no</button>
+      </div>
+    </article>
+  </div>
+
+  <script>
+    const roseSvg = `
+      <svg viewBox="0 0 140 140" role="img" aria-label="Rosa">
+        <defs>
+          <linearGradient id="rg" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#fff"/>
+            <stop offset=".45" stop-color="#f4c1d0"/>
+            <stop offset="1" stop-color="#c86d87"/>
+          </linearGradient>
+          <linearGradient id="stem" x1="0" x2="1">
+            <stop offset="0" stop-color="#8dbb94"/>
+            <stop offset="1" stop-color="#5e8f68"/>
+          </linearGradient>
+        </defs>
+        <path d="M70 75 C67 96 63 111 55 130" fill="none" stroke="url(#stem)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M58 100 C38 92 31 104 23 116 C43 119 55 113 62 103" fill="#d9ead7" opacity=".85"/>
+        <path d="M73 99 C95 89 103 101 111 115 C90 119 78 112 70 102" fill="#cfe3ce" opacity=".9"/>
+        <g transform="translate(70 57)">
+          <path d="M0-41 C24-42 42-22 35 2 C54 13 39 42 10 35 C1 56-32 48-29 17 C-53 6-40-31-8-25 C-3-34-1-38 0-41Z" fill="url(#rg)"/>
+          <path d="M-5-24 C13-34 31-16 19 2 C36 9 26 27 7 22 C1 36-19 27-16 10 C-32 4-24-20-5-24Z" fill="#fff4f8" opacity=".9"/>
+          <path d="M0-10 C14-16 23-2 12 9 C23 17 8 29-3 17 C-17 26-28 8-12-1 C-22-11-11-24 0-10Z" fill="#df92a8"/>
+          <circle r="7" fill="#fff" opacity=".72"/>
+        </g>
+      </svg>`;
+
+    const giftSvg = `
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <defs>
+          <linearGradient id="giftBox" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0" stop-color="#fff"/>
+            <stop offset="1" stop-color="#f7bfd0"/>
+          </linearGradient>
+          <linearGradient id="ribbon" x1="0" x2="1">
+            <stop offset="0" stop-color="#bf6680"/>
+            <stop offset="1" stop-color="#e8aaba"/>
+          </linearGradient>
+        </defs>
+        <path d="M22 52h76v48a8 8 0 0 1-8 8H30a8 8 0 0 1-8-8V52Z" fill="url(#giftBox)" stroke="#e7bcc9" stroke-width="2"/>
+        <path d="M18 38h84a7 7 0 0 1 7 7v12H11V45a7 7 0 0 1 7-7Z" fill="#fff" stroke="#e7bcc9" stroke-width="2"/>
+        <path d="M54 38h13v70H54z" fill="url(#ribbon)"/>
+        <path d="M12 56h96v11H12z" fill="url(#ribbon)" opacity=".92"/>
+        <path d="M58 36 C43 23 37 14 43 8 C52 0 61 18 61 36" fill="none" stroke="#c66f88" stroke-width="7" stroke-linecap="round"/>
+        <path d="M62 36 C78 22 84 14 78 8 C69 0 60 18 60 36" fill="none" stroke="#c66f88" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="60" cy="38" r="8" fill="#fff1b8" stroke="#d3a24a" stroke-width="2"/>
+      </svg>`;
+
+    const segments = [{"type": "letter", "kicker": "Comienzo", "title": "Dama de los mil gestos", "paragraphs": ["Dama de los mil gestos:", "No sé si las palabras alcanzarían para describir lo importante que sos para mí y lo mucho que te quiero, pero ya que es tu cumpleaños, quiero intentarlo…", "Creo que comenzaré por la parte de los regalos. En primera instancia, lo lamento por la caja enorme. Creo que ambos sabemos que el día que deje de ser exagerado, seguramente deje de ser Néstor. Notarás que hay 4 regalos y son de distintos tamaños, y como sabés, tu algoritmo es todo estructurado y lleva instrucciones para todo. Te pediré que primero abras el más grande."], "button": "Estoy lista para la primera indicación"}, {"type": "gate", "gift": 1, "kicker": "Primera pausa", "title": "Abrí la caja más grande", "instruction": "No sigas leyendo todavía. Primero abrí la caja más grande. Cuando ya la tengas abierta, tocá el botón y recién ahí aparece lo que tu algoritmo quería decirte sobre ese regalo.", "button": "Ya abrí la caja más grande"}, {"type": "reveal", "gift": 1, "kicker": "Regalo abierto", "title": "Ahora sí…", "paragraphs": ["Quizás usted, al ser un poquito exagerada al igual que yo, exageró el 25 de mayo al decir que su sueño era tener una máquina de hacer algodón de azúcar, pero ¿quién soy yo para privarla de un sueño? Y si puedo colaborar con ello, ¿por qué no hacerlo? Así que espero que le salgan ricos sus algodones. Le diría que me invite alguno, pero ella, con sus dulces, es mezquiiiiiiiiiiiiiiiiina, jajaja. Es broma, sé que no. Poquito."], "button": "Seguir leyendo"}, {"type": "letter", "kicker": "Siguiente parte", "title": "La segunda indicación", "paragraphs": ["Me gustaría que ahora abra el segundo regalo más grande: el rectángulo."], "button": "Ver indicación"}, {"type": "gate", "gift": 2, "kicker": "Segunda pausa", "title": "Abrí el rectángulo", "instruction": "Esta parte también se desbloquea solamente después de abrirlo. Primero el rectángulo, después la explicación.", "button": "Ya abrí el rectángulo"}, {"type": "reveal", "gift": 2, "kicker": "Regalo abierto", "title": "El recuerdo detrás del rectángulo", "paragraphs": ["El 25 de enero estabas en Brasil; estabas sensible porque tenías problemas personales/familiares. Tuviste una sobrecarga de estrés: chocaste el auto, tu familia, tu abuelo, y había un sol espectacular para tomar sol, pero… Justo te visitó tu amigo Andrés, y esa noche estabas sensible. Varios días pasamos sin hablar, pero tu sensibilidad hizo que buscaras a tu algoritmo, esa vez lo noté, y en nuestra charla intentaste desviar tu mente con todo lo que querías y necesitabas para el ciclo lectivo. Dijiste que te encantó el termo Stanley rosa. Rogué millones de veces que no te lo compres, para que pudiera hacerlo yo. Así que llegó la renovación, diría Rovira. Tiraba esa, dicen mis malditos niños ricos. Espero que te guste. Había uno más grande, pero cuando vi que este era de 800 ml, se me vino a la mente su frase: “todo debe de ser chiquito como yo”. Entonces dije: ¡es perfecto! ¿Habrá que calentar agua más seguido?, lamentablemente sí. No obstante, la profesora de prácticas tiene un compañero que está al pendiente de ello. Espero que ahora que tenés este termo, ya no peleen con la que me quiere mandar a perder al bosque, jaja. Y también espero que ahora que tenés tu Stanley, no desprestigies a mi Lumilagro, jaja, y me sigas pidiendo mates. O mínimamente deme su equipo, que yo le preparo, porque algo es seguro: amo prepararle mates."], "button": "Seguir leyendo"}, {"type": "letter", "kicker": "Siguiente parte", "title": "La tercera indicación", "paragraphs": ["Es momento de abrir el tercer regalo, y es el sobre grande."], "button": "Ver indicación"}, {"type": "gate", "gift": 3, "kicker": "Tercera pausa", "title": "Abrí el sobre grande", "instruction": "Primero el sobre grande. Cuando lo abras, este recuerdo se va a revelar completo.", "button": "Ya abrí el sobre grande"}, {"type": "reveal", "gift": 3, "kicker": "Regalo abierto", "title": "El recuerdo detrás del sobre", "paragraphs": ["El 6 de febrero te sentaste a mi lado y, cuando te invité un mate en la costanera, me dijiste: “¡Qué buen mate! Extrañé más al mate de lo que te extrañé a vos”. Qué hija de puma, jaja. Entre mate y mate nos estábamos poniendo al día, y me mostraste el collar de la virgencita que te regalaron. En eso mencionaste que la persona, si mal no recuerdo era tu primo, te dijo: “Quería regalarte una remera de Ferrari, pero dije que iba a ser mucho”. Y vos gritaste indignada por qué no lo hizo igual. Desde ese día revolví el mundo buscando una remera, jaja. Había en muchos lugares, pero yo quería la de Hamilton porque sabía que era tu corredor favorito, el 6 veces campeón en Mercedes. Y aunque busqué, busqué y busqué, no encontré. Había réplicas en Mercado Libre, pero… fanática mi niña de la F1 como para darle una réplica. Me quedé loco buscando y me preguntaba: ¿será que no lo lograré? Y al final no, no lo logré. Pero el 2 de mayo me dijiste que todo bien conmigo, pero si ves a Charles Leclerc, no compito. Y ahí dije: ¿será que de él sí encontraré? Y bueno, allí comenzó mi búsqueda, y lo logré. Así que ahí le dejo la número 16, para cuando corra la F1 y tenga que entrar a los pits con la escudería de Ferrari."], "button": "Seguir leyendo"}, {"type": "letter", "kicker": "Última indicación", "title": "Llegaste al último regalo", "paragraphs": ["Llegaste al último regalo."], "button": "Ver indicación"}, {"type": "gate", "gift": 4, "kicker": "Última pausa", "title": "Abrí el último regalo", "instruction": "Este es el último antes de seguir con la carta. Abrilo primero, sin adelantar la lectura. Cuando lo abras, tocá el botón.", "button": "Ya abrí el último regalo"}, {"type": "reveal", "gift": 4, "kicker": "Regalo abierto", "title": "El recuerdo del último regalo", "paragraphs": ["Me acuerdo de que un 2 de enero me dijiste que quisiste comprar el Fórmula 1 de Shell, pero ya no tenían más. Entonces quise buscar y, definitivamente, ya no tenían más. Pero me había quedado con el pendiente de Hamilton. Entonces, buscando, encontré el Ferrari de él. No existen más grandes que sean de colección; inclusive los de Shell eran más chicos. Me decepcionó un poco, pero me consoló el hecho de que la calidad del auto es muy buena, encontré el autito y encima lleva el número de Hamilton, así que me di por satisfecho. Y adivine qué: es como dice la dama, es chiquito como usted, jaja."], "button": "Seguir con la carta"}, {"type": "letter", "kicker": "Después de los regalos", "title": "Porque sí escucho", "paragraphs": ["Estos regalos, marcados por fechas y gustos suyos, son únicamente para demostrarle que la escucho, que le presto atención, que son importantes para mí sus gustos y/o necesidades, y que usted podrá ser un podcast, quizás sí habla mucho, pero hay alguien que la escucha y observa con atención, y que le da un valor enorme a cualquier cosa que mencione, a los gritos o en susurros, Él siempre la escucha; yo siempre la escucho. Pero basta de mí, porque esto… no se trata de mí. Comencé por los regalos porque creí que iba a ser la parte más fácil. Esta noche salí con usted y dejé esta carta para el último momento, porque necesitaba inspiración y por eso la llevé a cenar. Hubo un momento en que me dijo: “¿Por qué me mira así?”. Solo respondí que la estaba escuchando, pero oculté el verdadero motivo: me estaba motivando. Usted es mi más grande incentivo, así que comencemos finalmente…"], "button": "Comenzar finalmente"}, {"type": "final", "kicker": "Carta desbloqueada", "title": "Mi dama, mi kintsugi", "paragraphs": ["Belén, estos meses que la vida me permitió transitar a tu lado me han mostrado muchas etapas de ti, y me has cerrado la boca en muchas de las mismas. Siempre digo que sos muy hermosa, pero no siempre me refiero a tu físico, que también, cabe recalcar, es muy bonito, y por eso soy como una especie de adicto al verla. Pero su belleza real no viene por su físico, por su exteriorización, sino que más bien viene por su interior.", "Es sorprendente cómo la vida te ha golpeado, te ha dejado a la deriva e intentaron apagar tu brillo. Cuando te conocí, sinceramente, mucho brillo no había. Por eso intenté sacarte información para saber si mi teoría de que trabajabas tanto era para no pensar, que esas risas y gritos eran una pantalla. Y efectivamente, sí lo era. Siento que en muchas áreas de tu vida pusiste una persiana de hierro, con un candado, para que no pudieran abrirla, y en muchas cosas dejaste de pensar en los demás para únicamente pensar en ti. Eso último mencionado fue una etapa corta, pero que existió.", "Lamentablemente, la vida no es como esperamos, y ella, luchando y luchando, llegó a quedar totalmente rota. Y llegar a esa instancia es horrible. Pero ¿sabe qué? Hace poco estuve leyendo un poco de cultura japonesa y hay un arte muy hermoso que se llama Kintsugi. Consiste en reparar piezas de cerámica que se rompieron usando oro. El oro recorre las grietas; lo hermoso de esto, es que las mismas no se esconden, sino que se resaltan. La idea hermosa detrás, es que lo que se rompió no pierde valor, sino que puede volverse todavía más único, más profundo y más bello por la historia que lleva. Y siento eso con vos.", "No me tocó evidenciar a la antigua Belén, a la sana, donde no había grietas, pero hoy logro ver cómo entre tantas grietas hay un brillo que la vida no pudo apagar, y se potenció. Hoy brilla muy fuerte. Desconozco bien a qué te referís cuando decís que nada es suficiente; supongo que es parte del proceso. Pero hoy creo que mi dama es un kintsugi, porque yo evidencié en estos meses cómo las grietas se iban rellenando con un brillo inmenso. Yo evidencié cómo esa sonrisa que era fingida a los gritos comenzó a ser más sincera. Evidencié cómo pudo comenzar a abrir los candados de la persiana, y tomó pasos para comenzar a recibir libremente, o al menos lo intenta.", "Llegó un loco que no quiso quedarse en la orilla o huir cuando ella se lo pidió. Se quedó a insistir. Y cuando veo el brillo en sus ojos o su calma al apretar mis manos, me doy cuenta de que partecitas de las grietas tienen un poquito de oro mío. Y qué decirle: seguramente sí, aún no es suficiente para usted, porque esa autoexigencia que ve en mí es un reflejo de la autoexigencia que se tiene con usted.", "Hay muchas cosas que no le menciono, pero que me doy cuenta, como por ejemplo cuando ve un matrimonio y uno de los dos busca consuelo en el otro, o cuando ve a un bebé, o cuando ve un Yaris, o cuando está llena de gente tu departamento. Hay muchas cosas que no me decís, que me doy cuenta de que rondan tu inconsciente, pero muchas de ellas son bastante conscientes. Pero… ojalá en algún momento sea capaz de analizar las cosas con claridad, como lo hace su algoritmo, para que de ese modo logre dimensionar que para algunas cosas sigue habiendo y seguirá habiendo tiempo.", "Incluso se dará cuenta de lo mucho que avanzó en la vida, porque, ¡gente!, no cualquiera se levanta desde las cenizas, ejerce su profesión y sigue estudiando; termina especializaciones, cursos, diplomaturas. Pronto será el profesorado y quién sabe qué más llegará, ya que, aunque todos la vean de acá para allá, sonriendo, haciendo chistes, o como a ella le gusta, pasando desapercibida, esa mente brilla y mucho. Por lo tanto, no se quedará sin seguir creciendo profesionalmente. Y lo personal lleva tiempo. Es difícil aceptarlo, pero ningún castillo se construyó de la noche a la mañana. ¿Será difícil? Capaz que sí, y mucho. Pero yo no dudo nunca de la capacidad que tiene. Yo admiro y tengo en estima a muy pocas personas, y tú eres una de ellas.", "Podrán verla así, toda hermosa, rajando la tierra con sus outfits y perfumes que me hipnotizan, pero la capacidad de esa mente no tiene comparación. Ojalá nunca dudaras de tu capacidad; ojalá nunca dudaras de los conocimientos y experiencias que posees. Pero lamentablemente tenés algo: cuando otra persona dice algo acerca de tu trabajo o de tu manera de hacer las cosas, dudás de cada minúscula, de cada coma de tu vida.", "Para tu buena suerte, tu fan #1 se queda siempre cerquita para recordarle que hay personas que desearían tener tu conocimiento; para recordarle que hay personas que se graduaron, están trabajando, son profesionales, están allá afuera aplicando lo que usted una vez les enseñó. Porque a usted le gustará pasar desapercibida, pero hay algo que no puede evitar, y es dejar huellas en la vida de las personas.", "Toda persona que conoce a la dama, recibe sus consejos y enseñanzas, nunca vuelve a ser la misma. No porque tenga mucho conocimiento, el cual sí lo posee. No obstante, hay muchas personas con mucho conocimiento, pero hay algo que usted tiene que no poseen todos: no enseña únicamente desde el conocimiento, enseña desde el corazón. Yo siempre lo dije, lo mantengo y lo mantendré. Si un día vienen a preguntarme a mí cuál es su impronta, responderé que, a cada paso, en cada acción, en cada palabra, en cada reto o regaño, en cada instancia de aplicación en su vida, siempre pone el corazón por delante. Y me encanta el balance que hacés, porque tu corazón enorme tampoco avala las injusticias. Entonces, al aplicar disciplina, también lo hacés desde el corazón. Así que, por eso y mucho más, puedo decir que su impronta es poner su corazón en todas las cosas…", "Estoy a 1 hora de ir a buscarte. Pasé toda la noche envolviendo el regalo. Tenme piedad, es la primera vez que lo hago. Perdón por cuando veas los detalles, jaja. Te quiero mucho, y nunca olvides que aquí, a tu lado, tenés una persona que está en las buenas para reír a tu lado, pero que también estará para las malas. Cuando estés triste y debas llorar, podrás tener un hombro donde hacerlo y una mano a la cual poder apretar cuando las tuyas tiemblen. Hoy me preguntaste si te podés quedar mucho tiempo, y no sé cuánto tiempo me quede en la vida, pero todo el que tenga, me encantaría poder compartirlo contigo. En el restaurante, cuando fuiste al baño, me preguntaste si te esperaría, y la respuesta sigue siendo la misma: te esperaría toda la vida, porque hay algo que es indudable, creo que para ambas partes: yo te quiero mucho.", "Feliz cumpleaños, dama. Espero que lo pases hermoso. Me encantaría poder estar con usted en este día, pero no importa qué tan lejos estemos, hay una conexión que nos mantiene cerquita siempre. Te deseo lo mejor. Sé que te cuesta, sé que es difícil, sé que será difícil de afrontar, pero cuando te vuelva a ver ya vas a tener 30 años y 1 o 2 días, lo cual es más de lo que tendrás el día de hoy. Pero… yo cuando la vea, seguiré viendo a mi kintsugi, a mi dama, toda preciosa, con su hermosa sonrisa y sus ojos brillosos. Y ya lo dije una vez, pero lo reiteraré: no importa cuántos años más cumplas, siempre seguirás siendo mi niña, a la cual querré cuidar con mi vida…", "Te quiero mucho, dama de los mil gestos. Te deseo el mejor de los éxitos y un día que, aunque sea difícil, también sea hermoso. Nos vemos pronto con uno de nuestros ricos besos.", "Su algoritmo"]}];
+    const storageKey = 'dama_recorrido_v2_step';
+    let current = Number(localStorage.getItem(storageKey) || -1);
+    let pendingGateIndex = null;
+
+    const $ = (selector) => document.querySelector(selector);
+    const stage = $('#stage');
+    const topbar = $('#topbar');
+    const progressBar = $('#progressBar');
+    const progressText = $('#progressText');
+    const toast = $('#toast');
+
+    $('.rose-mark').innerHTML = roseSvg;
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function paragraphClass(text) {
+      if (text === 'Su algoritmo') return ' class="signature"';
+      return '';
+    }
+
+    function isKintsugiParagraph(text) {
+      return text.includes('Kintsugi. Consiste') || text.includes('hoy creo que mi dama es un kintsugi');
+    }
+
+    function renderParagraphs(paragraphs) {
+      return paragraphs.map((p) => `<p${paragraphClass(p)}>${escapeHtml(p)}</p>`).join('');
+    }
+
+    function renderSegment(segment, index, isLast) {
+      const safeKicker = escapeHtml(segment.kicker || '');
+      const safeTitle = escapeHtml(segment.title || '');
+      const action = isLast && segment.type !== 'final'
+        ? `<div class="segment-actions"><button class="btn${segment.type === 'gate' ? ' gold' : ''}" type="button" data-action="${segment.type === 'gate' ? 'gate' : 'next'}" data-index="${index}">${escapeHtml(segment.button || 'Continuar')}</button></div>`
+        : '';
+
+      if (segment.type === 'gate') {
+        return `<article class="segment" id="segment-${index}">
+          <div class="gate-card">
+            <div class="gift-visual">${giftSvg}</div>
+            <div>
+              <div class="kicker">${safeKicker}</div>
+              <h2>${safeTitle}</h2>
+              <p>${escapeHtml(segment.instruction)}</p>
+              <div class="warning">Sin spoilers · primero abrir, después leer</div>
+              ${action}
+            </div>
+          </div>
+        </article>`;
+      }
+
+      if (segment.type === 'reveal') {
+        return `<article class="segment" id="segment-${index}">
+          <div class="reveal-card">
+            <div class="reveal-badge">✧ Regalo ${segment.gift} abierto</div>
+            <h2>${safeTitle}</h2>
+            <div class="letter-text">${renderParagraphs(segment.paragraphs)}</div>
+            ${action}
+          </div>
+        </article>`;
+      }
+
+      if (segment.type === 'final') {
+        const paragraphs = segment.paragraphs.map((p) => {
+          const cls = paragraphClass(p);
+          const html = `<p${cls}>${escapeHtml(p)}</p>`;
+          return isKintsugiParagraph(p) ? `<div class="kintsugi-text">${html}</div>` : html;
+        }).join('');
+        return `<article class="segment" id="segment-${index}">
+          <div class="final-card">
+            <div class="kicker">${safeKicker}</div>
+            <h2>${safeTitle}</h2>
+            <div class="letter-text">${paragraphs}</div>
+            <div class="completion">
+              <p class="script">Feliz cumpleaños</p>
+              <p>La carta llegó al final, pero el gesto queda guardado. Esta página fue hecha para que cada regalo tenga su momento y cada palabra llegue cuando corresponde.</p>
+            </div>
+          </div>
+        </article>`;
+      }
+
+      return `<article class="segment" id="segment-${index}">
+        <div class="paper">
+          <div class="kicker">${safeKicker}</div>
+          <h2>${safeTitle}</h2>
+          <div class="letter-text">${renderParagraphs(segment.paragraphs)}</div>
+          ${action}
+        </div>
+      </article>`;
+    }
+
+    function updateProgress() {
+      const started = current >= 0;
+      topbar.classList.toggle('show', started);
+      if (!started) {
+        progressBar.style.width = '0%';
+        progressText.textContent = 'La carta aún no empezó.';
+        return;
+      }
+      const percent = Math.round(((current + 1) / segments.length) * 100);
+      progressBar.style.width = `${percent}%`;
+      const seg = segments[Math.min(current, segments.length - 1)];
+      if (seg.type === 'gate') {
+        progressText.textContent = `Pausa ${seg.gift} de 4: primero abrir el regalo, después confirmar.`;
+      } else if (seg.type === 'final') {
+        progressText.textContent = 'Carta completa desbloqueada.';
+      } else {
+        progressText.textContent = `Recorrido desbloqueado: ${percent}%.`;
+      }
+    }
+
+    function render(shouldScroll = true) {
+      stage.classList.toggle('show', current >= 0);
+      if (current < 0) {
+        stage.innerHTML = '';
+        updateProgress();
+        return;
+      }
+      const visible = segments.slice(0, current + 1);
+      stage.innerHTML = visible.map((segment, index) => renderSegment(segment, index, index === current)).join('');
+      updateProgress();
+      bindActions();
+      if (shouldScroll) {
+        requestAnimationFrame(() => {
+          const el = $(`#segment-${current}`);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+    }
+
+    function bindActions() {
+      stage.querySelectorAll('[data-action="next"]').forEach((button) => {
+        button.addEventListener('click', () => nextStep());
+      });
+      stage.querySelectorAll('[data-action="gate"]').forEach((button) => {
+        button.addEventListener('click', () => openGate(Number(button.dataset.index)));
+      });
+    }
+
+    function nextStep() {
+      current = Math.min(current + 1, segments.length - 1);
+      localStorage.setItem(storageKey, String(current));
+      softBurst();
+      render(true);
+    }
+
+    function openGate(index) {
+      pendingGateIndex = index;
+      const seg = segments[index];
+      $('#confirmText').textContent = `Cuando confirmes, se revela solamente la explicación del regalo ${seg.gift}. Nada más.`;
+      $('#confirmModal').classList.add('show');
+    }
+
+    function closeModal() {
+      $('#confirmModal').classList.remove('show');
+      pendingGateIndex = null;
+    }
+
+    function confirmGate() {
+      if (pendingGateIndex === null) return;
+      $('#confirmModal').classList.remove('show');
+      current = Math.min(pendingGateIndex + 1, segments.length - 1);
+      localStorage.setItem(storageKey, String(current));
+      const giftNum = segments[pendingGateIndex].gift;
+      showToast(`Regalo ${giftNum} abierto. Ahora sí, se revela el recuerdo.`);
+      giftBurst();
+      render(true);
+      pendingGateIndex = null;
+    }
+
+    function start() {
+      if (current < 0) {
+        current = 0;
+        localStorage.setItem(storageKey, String(current));
+        render(true);
+      } else {
+        stage.classList.add('show');
+        render(true);
+      }
+    }
+
+    function resetAll() {
+      localStorage.removeItem(storageKey);
+      current = -1;
+      render(false);
+      showToast('Recorrido reiniciado. Ahora puede empezar desde cero.');
+      $('#inicio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function createPetals() {
+      const layer = $('#petalLayer');
+      const count = window.innerWidth < 430 ? 18 : 28;
+      for (let i = 0; i < count; i++) {
+        const petal = document.createElement('span');
+        petal.className = 'petal';
+        petal.style.left = `${Math.random() * 100}vw`;
+        petal.style.animationDelay = `${Math.random() * -12}s`;
+        petal.style.setProperty('--fall', `${8 + Math.random() * 9}s`);
+        petal.style.setProperty('--drift', `${-42 + Math.random() * 84}px`);
+        petal.style.setProperty('--opacity', `${.38 + Math.random() * .5}`);
+        petal.style.setProperty('--blur', `${Math.random() > .78 ? .7 : 0}px`);
+        layer.appendChild(petal);
+      }
+    }
+
+    function softBurst() {
+      showFloating('♡', 6);
+    }
+
+    function giftBurst() {
+      showFloating('✦', 12);
+      showFloating('♡', 8);
+    }
+
+    function showFloating(symbol, amount) {
+      for (let i = 0; i < amount; i++) {
+        const el = document.createElement('span');
+        el.className = 'heart';
+        el.textContent = symbol;
+        el.style.left = `${20 + Math.random() * 60}vw`;
+        el.style.top = `${62 + Math.random() * 25}vh`;
+        el.style.animationDelay = `${Math.random() * .15}s`;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1100);
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('button, a, .modal-card')) return;
+      const heart = document.createElement('span');
+      heart.className = 'heart';
+      heart.textContent = '♡';
+      heart.style.left = `${e.clientX}px`;
+      heart.style.top = `${e.clientY}px`;
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 950);
+    });
+
+    $('#startBtn').addEventListener('click', start);
+    $('#resetBtnHero').addEventListener('click', resetAll);
+    $('#resetBtnTop').addEventListener('click', resetAll);
+    $('#modalNo').addEventListener('click', closeModal);
+    $('#modalYes').addEventListener('click', confirmGate);
+    $('#confirmModal').addEventListener('click', (e) => { if (e.target.id === 'confirmModal') closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    createPetals();
+    render(false);
+  </script>
+</body>
+</html>
